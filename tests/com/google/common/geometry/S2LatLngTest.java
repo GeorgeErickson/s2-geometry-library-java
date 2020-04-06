@@ -15,6 +15,11 @@
  */
 package com.google.common.geometry;
 
+import com.google.common.annotations.GwtCompatible;
+import com.google.common.annotations.GwtIncompatible;
+
+/** Verifies S2LatLng. */
+@GwtCompatible(emulated = true)
 public strictfp class S2LatLngTest extends GeometryTestCase {
 
   public void testBasic() {
@@ -42,10 +47,12 @@ public strictfp class S2LatLngTest extends GeometryTestCase {
     assertEquals(better.lat(), S1Angle.degrees(-90));
     assertDoubleNear(better.lng().radians(), 0);
 
-    assertTrue((S2LatLng.fromDegrees(10, 20).add(S2LatLng.fromDegrees(20, 30))).approxEquals(
-        S2LatLng.fromDegrees(30, 50)));
-    assertTrue((S2LatLng.fromDegrees(10, 20).sub(S2LatLng.fromDegrees(20, 30))).approxEquals(
-        S2LatLng.fromDegrees(-10, -10)));
+    assertTrue(
+        (S2LatLng.fromDegrees(10, 20).add(S2LatLng.fromDegrees(20, 30)))
+            .approxEquals(S2LatLng.fromDegrees(30, 50)));
+    assertTrue(
+        (S2LatLng.fromDegrees(10, 20).sub(S2LatLng.fromDegrees(20, 30)))
+            .approxEquals(S2LatLng.fromDegrees(-10, -10)));
     assertTrue((S2LatLng.fromDegrees(10, 20).mul(0.5)).approxEquals(S2LatLng.fromDegrees(5, 10)));
   }
 
@@ -54,12 +61,12 @@ public strictfp class S2LatLngTest extends GeometryTestCase {
     assertDoubleNear(
         new S2LatLng(S2LatLng.fromDegrees(90.0, 65.0).toPoint()).lat().degrees(), 90.0);
     assertEquals(
-        new S2LatLng(S2LatLng.fromRadians(-S2.M_PI_2, 1).toPoint()).lat().radians(), -S2.M_PI_2);
+        -S2.M_PI_2, new S2LatLng(S2LatLng.fromRadians(-S2.M_PI_2, 1).toPoint()).lat().radians());
     assertDoubleNear(
         Math.abs(new S2LatLng(S2LatLng.fromDegrees(12.2, 180.0).toPoint()).lng().degrees()), 180.0);
     assertEquals(
-        Math.abs(new S2LatLng(S2LatLng.fromRadians(0.1, -S2.M_PI).toPoint()).lng().radians()),
-        S2.M_PI);
+        S2.M_PI,
+        Math.abs(new S2LatLng(S2LatLng.fromRadians(0.1, -S2.M_PI).toPoint()).lng().radians()));
 
     // Test a bunch of random points.
     for (int i = 0; i < 100000; ++i) {
@@ -75,15 +82,24 @@ public strictfp class S2LatLngTest extends GeometryTestCase {
 
   public void testDistance() {
     assertEquals(
-        S2LatLng.fromDegrees(90, 0).getDistance(S2LatLng.fromDegrees(90, 0)).radians(), 0.0);
+        0.0, S2LatLng.fromDegrees(90, 0).getDistance(S2LatLng.fromDegrees(90, 0)).radians());
     assertDoubleNear(
-        S2LatLng.fromDegrees(-37, 25).getDistance(S2LatLng.fromDegrees(-66, -155)).degrees(), 77,
+        S2LatLng.fromDegrees(-37, 25).getDistance(S2LatLng.fromDegrees(-66, -155)).degrees(),
+        77,
         1e-13);
     assertDoubleNear(
-        S2LatLng.fromDegrees(0, 165).getDistance(S2LatLng.fromDegrees(0, -80)).degrees(), 115,
+        S2LatLng.fromDegrees(0, 165).getDistance(S2LatLng.fromDegrees(0, -80)).degrees(),
+        115,
         1e-13);
     assertDoubleNear(
-        S2LatLng.fromDegrees(47, -127).getDistance(S2LatLng.fromDegrees(-47, 53)).degrees(), 180,
+        S2LatLng.fromDegrees(47, -127).getDistance(S2LatLng.fromDegrees(-47, 53)).degrees(),
+        180,
         2e-6);
+  }
+
+  @GwtIncompatible("GeometryTestCase.encodeDecode")
+  public void testSerializable() throws Exception {
+    S2LatLng latLong = S2LatLng.fromDegrees(-37, 25);
+    assertEquals(latLong, encodeDecode(latLong));
   }
 }
