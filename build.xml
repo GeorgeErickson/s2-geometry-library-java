@@ -1,4 +1,9 @@
 <project name="s2-geometry-java" default="compile">
+  <build>
+    <plugins>
+
+    </plugins>
+  </build>
 
   <property name="src.dir"         value="${basedir}/src" />
   <property name="tests.dir"       value="${basedir}/tests" />
@@ -14,6 +19,8 @@
       <include name="*.jar" />
     </fileset>
   </path>
+
+
 
   <target name="clean"
           description="removes all generated files">
